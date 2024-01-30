@@ -8,13 +8,6 @@
     <artifactId>jtcpip</artifactId>
     <version>1.0</version>
 
-    <dependencies>
-        <dependency>
-            <groupId></groupId>
-            <artifactId></artifactId>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>

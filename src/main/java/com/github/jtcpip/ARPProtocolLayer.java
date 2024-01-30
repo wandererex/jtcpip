@@ -34,6 +34,8 @@ public class ARPProtocolLayer implements PacketReceiver {
             return;
         }
 
+        System.out.println("receivePacket" + packet);
+
         //确保收到数据包是arp类型
         EthernetPacket etherHeader = (EthernetPacket)packet.datalink;
         /*
@@ -105,15 +107,13 @@ public class ARPProtocolLayer implements PacketReceiver {
 
         if (ipToMacReceiverTable.get(ipToInt) == null) {
             ipToMacReceiverTable.put(ipToInt, new ArrayList<IMacReceiver>());
+            ArrayList<IMacReceiver> receiverList = ipToMacReceiverTable.get(ipToInt);
+            if (receiverList.contains(receiver) != true) {
+                receiverList.add(receiver);
+            }
             //发送ARP请求包
             sendARPRequestMsg(ip);
         }
-        ArrayList<IMacReceiver> receiverList = ipToMacReceiverTable.get(ipToInt);
-        if (receiverList.contains(receiver) != true) {
-            receiverList.add(receiver);
-        }
-
-        return;
     }
 
     private void sendARPRequestMsg(byte[] ip) {

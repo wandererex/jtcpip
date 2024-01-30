@@ -22,6 +22,8 @@ public class DataLinkLayer extends PacketProvider implements jpcap.PacketReceive
     private byte[] macAddress = null;
     JpcapSender sender = null;
 
+    JpcapCaptor captor= null;
+
     private DataLinkLayer() {
 
     }
@@ -40,8 +42,6 @@ public class DataLinkLayer extends PacketProvider implements jpcap.PacketReceive
         this.ipAddress = this.getDeviceIpAddress();
         this.macAddress = new byte[6];
         this.getDeviceMacAddress();
-
-        JpcapCaptor captor = null;
         try {
             captor = JpcapCaptor.openDevice(device,2000,false,3000);
         } catch (IOException e) {
@@ -49,6 +49,9 @@ public class DataLinkLayer extends PacketProvider implements jpcap.PacketReceive
         }
 
         this.sender = captor.getJpcapSenderInstance();
+        new Thread(() -> {
+            captor.loopPacket(-1, this);
+        }).start();
 
         //测试arp协议
         this.testARPProtocol();
@@ -124,7 +127,7 @@ public class DataLinkLayer extends PacketProvider implements jpcap.PacketReceive
 
         byte[] ip;
         try {
-            ip = InetAddress.getByName("192.168.2.1").getAddress();
+            ip = InetAddress.getByName("192.168.0.1").getAddress();
             arpLayer.getMacByIP(ip, this);
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block

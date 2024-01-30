@@ -8,17 +8,13 @@ import jpcap.NetworkInterfaceAddress;
 import jpcap.PacketReceiver;
 import jpcap.packet.Packet;
 
-public class ProtocolEntry implements PacketReceiver {
-	
-	public void receivePacket(Packet packet) {
-		System.out.println(packet);
-		System.out.println("Receive a packet");
-	}
+public class ProtocolMain {
 
 	public static void main(String[] args) throws IOException {
 		//获取网卡列表
 	    NetworkInterface[] devices = JpcapCaptor.getDeviceList();
 	    JpcapCaptor captor = null;
+		NetworkInterface networkInterface = null;
 	    for (int i = 0; i < devices.length; i++) {
 	    	//显示网卡名字
 	        System.out.println(i+": "+devices[i].name + "(" + devices[i].description + ")");
@@ -39,10 +35,12 @@ public class ProtocolEntry implements PacketReceiver {
 	        captor = JpcapCaptor.openDevice(devices[i], 65536, false, 20);
 	        if (captor != null) {
 	            System.out.println("Open captor on device" + i);
+				networkInterface = devices[i];
 	            break;
 	        }
 	    }
-	    
-	   
+		if (networkInterface != null) {
+			DataLinkLayer.getInstance().initWithOpenDevice(networkInterface);
+		}
 	}
 }
